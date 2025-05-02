@@ -18,7 +18,7 @@ const handler = NextAuth({
 
       return session;
     },
-    async signIn({ profile }) {
+    async signIn({ account, profile }) {
       try {
         await connectToDB();
 
@@ -29,14 +29,14 @@ const handler = NextAuth({
         if (!userExists) {
           await User.create({
             email: profile.email,
-            username: profile.name.replace(" ", "").toLowerCase(),
-            image: profile.picture,
+            username: profile.name.replace(/\s+/g, "").toLowerCase(),
+            image: profile.picture || profile.image,
           });
         }
 
         return true;
       } catch (err) {
-        console.log(err);
+        console.log("Error during sign in:", err);
         return false;
       }
     },
